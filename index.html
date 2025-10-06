@@ -3,92 +3,153 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Tłumacz UA ↔ NO</title>
+  <title>UA↔NO</title>
   <style>
     :root{
       --ua-blue:#0057b7;
       --ua-yellow:#ffd700;
-      --overlay: rgba(255,255,255,.14);
+      --white:#ffffff;
+      --overlay: rgba(255,255,255,.18);
     }
     *{box-sizing:border-box}
     html,body{height:100%}
     body{
       margin:0;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      /* Tło: Ukraina (niebieski → żółty) */
+      /* Tło: Ukraina (niebieski→żółty) */
       background: linear-gradient(180deg, var(--ua-blue) 0%, var(--ua-blue) 45%, var(--ua-yellow) 100%);
       display:flex; align-items:center; justify-content:center;
+      min-height:100vh;
+      position:relative;
+      overflow:hidden;
     }
-    /* Delikatny, „folkowy” ornament – pasy u góry i dołu, bez dodatkowych elementów w DOM */
+
+    /* Wyraźne pasy „wyszywanki” – góra/dół */
     body::before, body::after{
-      content:""; position:fixed; left:0; width:100%; height:80px; pointer-events:none;
+      content:"";
+      position:fixed; left:0; width:100%;
+      height:140px;
+      z-index:0; pointer-events:none;
+      /* Warstwa 1: powtarzane romby/krzyżyki */
       background:
-        repeating-linear-gradient(45deg, transparent 0 10px, var(--overlay) 10px 12px, transparent 12px 22px),
-        repeating-linear-gradient(-45deg, transparent 0 10px, var(--overlay) 10px 12px, transparent 12px 22px);
-      mix-blend-mode: soft-light;
-      z-index:0;
+        repeating-conic-gradient(from 45deg, rgba(255,255,255,.85) 0 15deg, transparent 15deg 30deg) 0 0/52px 52px,
+        repeating-linear-gradient(90deg, rgba(255,255,255,.25) 0 12px, transparent 12px 24px);
+      mix-blend-mode:screen;
+      opacity:.95;
     }
     body::before{ top:0; }
     body::after{ bottom:0; }
 
     .wrap{
       width:min(100%, 1100px);
-      padding: clamp(12px, 2.5vw, 24px);
-      display:flex; flex-direction:column; gap: clamp(14px, 3vw, 28px);
+      padding: clamp(12px, 3vw, 28px);
+      display:flex; flex-direction:column; gap: clamp(12px, 2.5vw, 24px);
       align-items:center; justify-content:center;
       position:relative; z-index:1;
     }
 
-    header{
+    /* Haftowana ramka dookoła widżetu */
+    .frame{
+      position:relative;
       width:100%;
-      display:flex; justify-content:center;
-    }
-    h1{
-      margin:0;
-      font-weight:800;
-      letter-spacing:.6px;
-      text-transform:uppercase;
-      font-size: clamp(24px, 5vw, 46px);
-      line-height:1.1;
-      color:#fff;
-      /* Subtelny efekt „haftu” */
-      text-shadow:
-        0 1px 0 rgba(0,0,0,.10),
-        0 6px 18px rgba(0,0,0,.20);
+      padding: clamp(12px, 2vw, 20px);
+      border-radius: 22px;
+      /* „Haft” – kratkowany wzór w barwach UA */
+      background:
+        repeating-linear-gradient(0deg, var(--ua-blue) 0 6px, transparent 6px 12px),
+        repeating-linear-gradient(90deg, var(--ua-yellow) 0 6px, transparent 6px 12px);
+      box-shadow: 0 14px 40px rgba(0,0,0,.30);
+      overflow:visible;
     }
 
-    /* Kontener widżetu – wyłącznie wymiarowanie; brak dodatkowych treści */
+    /* Rozety w narożnikach (dekor bez treści) */
+    .corner{
+      position:absolute; width:34px; height:34px;
+      background:
+        conic-gradient(from 45deg,
+          var(--ua-blue) 0 90deg, transparent 90deg 180deg,
+          var(--ua-yellow) 180deg 270deg, transparent 270deg 360deg);
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
+      z-index:2; pointer-events:none;
+      transform: rotate(45deg);
+    }
+    .c1{ top:-12px; left:-12px; }
+    .c2{ top:-12px; right:-12px; }
+    .c3{ bottom:-12px; left:-12px; }
+    .c4{ bottom:-12px; right:-12px; }
+
+    /* Panel pod widżet – delikatne szkło, by motywy były widoczne i kontrastowe */
+    .panel{
+      position:relative;
+      border-radius: 16px;
+      padding: clamp(4px, 1vw, 6px);
+      background: rgba(255,255,255,.10);
+      backdrop-filter: blur(2px);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
+    }
+
+    /* Sieć drobnych krzyżyków na panelu (subtelny wzór, ale wyraźniejszy) */
+    .panel::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 10px 10px, rgba(255,255,255,.45) 2px, transparent 3px) 0 0/22px 22px,
+        radial-gradient(circle at 0 0, rgba(0,0,0,.06) 2px, transparent 3px) 0 0/22px 22px;
+      mix-blend-mode:screen;
+      opacity:.9;
+      pointer-events:none;
+      border-radius: inherit;
+    }
+
+    /* Sam widżet – pełna responsywność, bez tekstu */
     .widget{
       width:100%;
       display:flex; align-items:stretch; justify-content:center;
     }
-
-    /* Ustawienia elementu widżetu dla lepszej widoczności na mobile/desktop */
     elevenlabs-convai{
       display:block;
       width:100%;
-      height: min(78vh, 740px);
-      border-radius: 18px;
+      height: min(78vh, 760px);
+      border-radius: 14px;
       overflow:hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
       background: rgba(255,255,255,.06);
-      backdrop-filter: blur(2px);
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+    }
+
+    /* Dodatkowe półprzezroczyste „nici” haftu za ramką */
+    .threads{
+      position:absolute; inset:-40px;
+      background:
+        repeating-linear-gradient(135deg, var(--overlay) 0 14px, transparent 14px 28px),
+        repeating-linear-gradient(45deg, var(--overlay) 0 14px, transparent 14px 28px);
+      border-radius: 32px;
+      z-index:-1;
+      pointer-events:none;
     }
 
     @media (max-width: 560px){
-      body::before, body::after{ height:60px; }
-      elevenlabs-convai{ height: min(75vh, 680px); border-radius:14px; }
+      body::before, body::after{ height:100px; }
+      .corner{ width:28px; height:28px; }
+      elevenlabs-convai{ height: min(74vh, 680px); }
+      .frame{ border-radius:18px; }
+      .panel{ border-radius:12px; }
     }
   </style>
 </head>
 <body>
   <div class="wrap">
-    <header>
-      <h1>Tłumacz&nbsp;UA&nbsp;↔&nbsp;NO</h1>
-    </header>
+    <div class="frame">
+      <span class="corner c1"></span>
+      <span class="corner c2"></span>
+      <span class="corner c3"></span>
+      <span class="corner c4"></span>
+      <div class="threads"></div>
 
-    <div class="widget">
-      <elevenlabs-convai agent-id="agent_0901k6wgrtfjf69v1sxt7scnhnjz"></elevenlabs-convai>
+      <div class="panel">
+        <div class="widget">
+          <elevenlabs-convai agent-id="agent_0901k6wgrtfjf69v1sxt7scnhnjz"></elevenlabs-convai>
+        </div>
+      </div>
     </div>
   </div>
 
