@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tłumacz UA ↔ NO</title>
+  <style>
+    :root{
+      --ua-blue:#0057b7;
+      --ua-yellow:#ffd700;
+      --overlay: rgba(255,255,255,.14);
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      /* Tło: Ukraina (niebieski → żółty) */
+      background: linear-gradient(180deg, var(--ua-blue) 0%, var(--ua-blue) 45%, var(--ua-yellow) 100%);
+      display:flex; align-items:center; justify-content:center;
+    }
+    /* Delikatny, „folkowy” ornament – pasy u góry i dołu, bez dodatkowych elementów w DOM */
+    body::before, body::after{
+      content:""; position:fixed; left:0; width:100%; height:80px; pointer-events:none;
+      background:
+        repeating-linear-gradient(45deg, transparent 0 10px, var(--overlay) 10px 12px, transparent 12px 22px),
+        repeating-linear-gradient(-45deg, transparent 0 10px, var(--overlay) 10px 12px, transparent 12px 22px);
+      mix-blend-mode: soft-light;
+      z-index:0;
+    }
+    body::before{ top:0; }
+    body::after{ bottom:0; }
+
+    .wrap{
+      width:min(100%, 1100px);
+      padding: clamp(12px, 2.5vw, 24px);
+      display:flex; flex-direction:column; gap: clamp(14px, 3vw, 28px);
+      align-items:center; justify-content:center;
+      position:relative; z-index:1;
+    }
+
+    header{
+      width:100%;
+      display:flex; justify-content:center;
+    }
+    h1{
+      margin:0;
+      font-weight:800;
+      letter-spacing:.6px;
+      text-transform:uppercase;
+      font-size: clamp(24px, 5vw, 46px);
+      line-height:1.1;
+      color:#fff;
+      /* Subtelny efekt „haftu” */
+      text-shadow:
+        0 1px 0 rgba(0,0,0,.10),
+        0 6px 18px rgba(0,0,0,.20);
+    }
+
+    /* Kontener widżetu – wyłącznie wymiarowanie; brak dodatkowych treści */
+    .widget{
+      width:100%;
+      display:flex; align-items:stretch; justify-content:center;
+    }
+
+    /* Ustawienia elementu widżetu dla lepszej widoczności na mobile/desktop */
+    elevenlabs-convai{
+      display:block;
+      width:100%;
+      height: min(78vh, 740px);
+      border-radius: 18px;
+      overflow:hidden;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      background: rgba(255,255,255,.06);
+      backdrop-filter: blur(2px);
+    }
+
+    @media (max-width: 560px){
+      body::before, body::after{ height:60px; }
+      elevenlabs-convai{ height: min(75vh, 680px); border-radius:14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Tłumacz&nbsp;UA&nbsp;↔&nbsp;NO</h1>
+    </header>
+
+    <div class="widget">
+      <elevenlabs-convai agent-id="agent_0901k6wgrtfjf69v1sxt7scnhnjz"></elevenlabs-convai>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
+</body>
+</html>
