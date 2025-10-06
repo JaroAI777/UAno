@@ -12,38 +12,6 @@
     *{ box-sizing:border-box; }
     html, body { height:100%; }
 
-    /* Tło: wyraźny gradient UA + subtelny „haft” na całej powierzchni */
-    body{
-      margin:0;
-      display:flex; align-items:center; justify-content:center;
-      min-height:100vh;
-      background:
-        /* drobny wzór siatki/krzyżyków – lepiej widoczny */
-        radial-gradient(circle at 10px 10px, rgba(255,255,255,.35) 3px, transparent 4px) 0 0/26px 26px,
-        linear-gradient(180deg, var(--ua-blue) 0%, var(--ua-blue) 46%, var(--ua-yellow) 100%);
-      position:relative;
-      overflow:hidden;
-    }
-
-    /* Szerokie pasy „wyszywanki” – góra i dół, bardzo wyraźne */
-    body::before, body::after{
-      content:"";
-      position:fixed; left:0; width:100%;
-      height:clamp(140px, 18vh, 220px);
-      z-index:0; pointer-events:none;
-      /* baza: jasny pas */
-      background:
-        /* romby/krzyże – grube */
-        repeating-conic-gradient(from 45deg,
-          rgba(255,255,255,.95) 0 22.5deg, transparent 22.5deg 45deg) 0 0/78px 78px,
-        /* przetykające paski – imitacja haftu */
-        repeating-linear-gradient(90deg,
-          rgba(0,0,0,.12) 0 14px, transparent 14px 28px);
-      mix-blend-mode:screen;
-    }
-    body::before{ top:0; }
-    body::after{ bottom:0; }
-
     /* Sam widżet – jedyny widoczny element w treści */
     elevenlabs-convai{
       display:block;
