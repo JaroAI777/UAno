@@ -3,156 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>UA↔NO</title>
+  <title>UA ↔ NO</title>
   <style>
     :root{
       --ua-blue:#0057b7;
       --ua-yellow:#ffd700;
-      --white:#ffffff;
-      --overlay: rgba(255,255,255,.18);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
+    *{ box-sizing:border-box; }
+    html, body { height:100%; }
+
+    /* Tło: wyraźny gradient UA + subtelny „haft” na całej powierzchni */
     body{
       margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
-      /* Tło: Ukraina (niebieski→żółty) */
-      background: linear-gradient(180deg, var(--ua-blue) 0%, var(--ua-blue) 45%, var(--ua-yellow) 100%);
       display:flex; align-items:center; justify-content:center;
       min-height:100vh;
+      background:
+        /* drobny wzór siatki/krzyżyków – lepiej widoczny */
+        radial-gradient(circle at 10px 10px, rgba(255,255,255,.35) 3px, transparent 4px) 0 0/26px 26px,
+        linear-gradient(180deg, var(--ua-blue) 0%, var(--ua-blue) 46%, var(--ua-yellow) 100%);
       position:relative;
       overflow:hidden;
     }
 
-    /* Wyraźne pasy „wyszywanki” – góra/dół */
+    /* Szerokie pasy „wyszywanki” – góra i dół, bardzo wyraźne */
     body::before, body::after{
       content:"";
       position:fixed; left:0; width:100%;
-      height:140px;
+      height:clamp(140px, 18vh, 220px);
       z-index:0; pointer-events:none;
-      /* Warstwa 1: powtarzane romby/krzyżyki */
+      /* baza: jasny pas */
       background:
-        repeating-conic-gradient(from 45deg, rgba(255,255,255,.85) 0 15deg, transparent 15deg 30deg) 0 0/52px 52px,
-        repeating-linear-gradient(90deg, rgba(255,255,255,.25) 0 12px, transparent 12px 24px);
+        /* romby/krzyże – grube */
+        repeating-conic-gradient(from 45deg,
+          rgba(255,255,255,.95) 0 22.5deg, transparent 22.5deg 45deg) 0 0/78px 78px,
+        /* przetykające paski – imitacja haftu */
+        repeating-linear-gradient(90deg,
+          rgba(0,0,0,.12) 0 14px, transparent 14px 28px);
       mix-blend-mode:screen;
-      opacity:.95;
     }
     body::before{ top:0; }
     body::after{ bottom:0; }
 
-    .wrap{
-      width:min(100%, 1100px);
-      padding: clamp(12px, 3vw, 28px);
-      display:flex; flex-direction:column; gap: clamp(12px, 2.5vw, 24px);
-      align-items:center; justify-content:center;
-      position:relative; z-index:1;
-    }
-
-    /* Haftowana ramka dookoła widżetu */
-    .frame{
-      position:relative;
-      width:100%;
-      padding: clamp(12px, 2vw, 20px);
-      border-radius: 22px;
-      /* „Haft” – kratkowany wzór w barwach UA */
-      background:
-        repeating-linear-gradient(0deg, var(--ua-blue) 0 6px, transparent 6px 12px),
-        repeating-linear-gradient(90deg, var(--ua-yellow) 0 6px, transparent 6px 12px);
-      box-shadow: 0 14px 40px rgba(0,0,0,.30);
-      overflow:visible;
-    }
-
-    /* Rozety w narożnikach (dekor bez treści) */
-    .corner{
-      position:absolute; width:34px; height:34px;
-      background:
-        conic-gradient(from 45deg,
-          var(--ua-blue) 0 90deg, transparent 90deg 180deg,
-          var(--ua-yellow) 180deg 270deg, transparent 270deg 360deg);
-      filter: drop-shadow(0 2px 6px rgba(0,0,0,.25));
-      z-index:2; pointer-events:none;
-      transform: rotate(45deg);
-    }
-    .c1{ top:-12px; left:-12px; }
-    .c2{ top:-12px; right:-12px; }
-    .c3{ bottom:-12px; left:-12px; }
-    .c4{ bottom:-12px; right:-12px; }
-
-    /* Panel pod widżet – delikatne szkło, by motywy były widoczne i kontrastowe */
-    .panel{
-      position:relative;
-      border-radius: 16px;
-      padding: clamp(4px, 1vw, 6px);
-      background: rgba(255,255,255,.10);
-      backdrop-filter: blur(2px);
-      box-shadow: inset 0 0 0 1px rgba(255,255,255,.18);
-    }
-
-    /* Sieć drobnych krzyżyków na panelu (subtelny wzór, ale wyraźniejszy) */
-    .panel::before{
-      content:"";
-      position:absolute; inset:0;
-      background:
-        radial-gradient(circle at 10px 10px, rgba(255,255,255,.45) 2px, transparent 3px) 0 0/22px 22px,
-        radial-gradient(circle at 0 0, rgba(0,0,0,.06) 2px, transparent 3px) 0 0/22px 22px;
-      mix-blend-mode:screen;
-      opacity:.9;
-      pointer-events:none;
-      border-radius: inherit;
-    }
-
-    /* Sam widżet – pełna responsywność, bez tekstu */
-    .widget{
-      width:100%;
-      display:flex; align-items:stretch; justify-content:center;
-    }
+    /* Sam widżet – jedyny widoczny element w treści */
     elevenlabs-convai{
       display:block;
-      width:100%;
-      height: min(78vh, 760px);
-      border-radius: 14px;
+      width:min(100%, 1100px);
+      height:min(85vh, 820px);
+      border-radius:20px;
       overflow:hidden;
-      background: rgba(255,255,255,.06);
-      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      /* lekkie „szkło”, by motywy były wciąż widoczne, ale UI czytelne */
+      background: rgba(255,255,255,.10);
+      backdrop-filter: blur(2px);
+      box-shadow: 0 20px 60px rgba(0,0,0,.35), 0 0 0 3px rgba(255,255,255,.18) inset;
+      z-index:1;
     }
 
-    /* Dodatkowe półprzezroczyste „nici” haftu za ramką */
-    .threads{
-      position:absolute; inset:-40px;
-      background:
-        repeating-linear-gradient(135deg, var(--overlay) 0 14px, transparent 14px 28px),
-        repeating-linear-gradient(45deg, var(--overlay) 0 14px, transparent 14px 28px);
-      border-radius: 32px;
-      z-index:-1;
-      pointer-events:none;
-    }
-
-    @media (max-width: 560px){
-      body::before, body::after{ height:100px; }
-      .corner{ width:28px; height:28px; }
-      elevenlabs-convai{ height: min(74vh, 680px); }
-      .frame{ border-radius:18px; }
-      .panel{ border-radius:12px; }
+    @media (max-width:560px){
+      elevenlabs-convai{ height:min(80vh, 720px); border-radius:16px; }
+      body::before, body::after{ height:clamp(120px, 20vh, 200px); }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <div class="frame">
-      <span class="corner c1"></span>
-      <span class="corner c2"></span>
-      <span class="corner c3"></span>
-      <span class="corner c4"></span>
-      <div class="threads"></div>
-
-      <div class="panel">
-        <div class="widget">
-          <elevenlabs-convai agent-id="agent_0901k6wgrtfjf69v1sxt7scnhnjz"></elevenlabs-convai>
-        </div>
-      </div>
-    </div>
-  </div>
-
+  <elevenlabs-convai agent-id="agent_0901k6wgrtfjf69v1sxt7scnhnjz"></elevenlabs-convai>
   <script src="https://unpkg.com/@elevenlabs/convai-widget-embed" async type="text/javascript"></script>
 </body>
 </html>
